@@ -1,31 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0
 
+import "Donatee.sol";
 pragma solidity >=0.7.0 <0.9.0;
 
 contract NGO {
-    address[] donors;
-    address[] donatees;
-    address[] suspectLaundry;
+    address[] private donors;
+    address[] private donatees;
+    address[] private suspectLaundry;
+    string private donorName;
+    string private donorLocation;
+
 
     uint threshold = 10;
     uint totalFunds = 0;
     uint maxValue = 50;
     Donatee private _instance; //instance of donatee obj
 
+    constructor() {
+        _instance = new Donatee();
+        addDonatees(address(_instance)); // make ur life easy
+    }
     // Donate Function 
-    function Donate(address donoraddr, uint amount) public payable {
-        if (amount > threshold ){
-           addDonors(donoraddr);
-           addSuspect(donoraddr);
-           totalFunds = address(this).balance + amount;
-           //TODO: raise a warning after adding to the sus list
-        }
-        else if (amount <= threshold ) {
+    function Donate(address donoraddr, uint _amount) public payable {
+
+        require(donoraddr != address(0x00) , "Pls enter your etherium addr");
+        require(_amount >= 1, "Pls Enter an integer number");
+
+        if(_amount > threshold ){
             addDonors(donoraddr);
-            totalFunds = address(this).balance + amount;
+           addSuspect(donoraddr);
+           totalFunds += _amount;
+           require(_amount <= threshold, "Your addr will be added to suspect");
         }
-        else if (totalFunds > maxValue) {
-            //TODO: implement that function to alert everyone
+        else if(_amount <= threshold ) {
+            addDonors(donoraddr);
+            totalFunds += _amount;
+        }
+        else if(totalFunds > maxValue) {
+            alertAll();
         }
     }
 
@@ -34,86 +46,61 @@ contract NGO {
         return totalFunds;
     }
 
-    function getDonors () public view returns (address[] memory){
+    function getDonors() public view returns (address[] memory){
         return donors;
     }
 
-    function getDonatees () public view returns (address[] memory){
+    function getDonatees() public view returns (address[] memory){
         return donatees;
     }
-
-// 0xddaAd340b0f1Ef65169Ae5E41A8b10776a75482d
-    function getLaundry () public view returns (address[] memory){
+    
+    function getLaundry() public view returns (address[] memory){
         return suspectLaundry;
     }
 
-    function addDonors(address donor) private {
-        donors.push(donor);
+    function addDonors(address _donor) private {
+        donors.push(_donor);
     }
 
-    function addDonatees(address donatee) private {
-        donatees.push(donatee);
+    function addDonatees(address _donatee) private {
+        donatees.push(_donatee);
     }
 
-    function addSuspect(address suspect) private {
-        suspectLaundry.push(suspect);
+    function addSuspect(address _suspect) private {
+        suspectLaundry.push(_suspect);
     }
 
-    function alertAll () private {
-
-       // TODO: make this function alert everyone that this NGO might laundry place
-    }
-}
-
-
-contract Donor {
-
-    string private name;
-    string private location;
-    uint256 private amount;
-
-    NGO private _instance;
-    constructor() {
-        _instance = new NGO();
+    function alertAll() private {
+        require(totalFunds <= maxValue, "Everyone will be notified, this organisation is probably a laudry place" );
     }
 
-    function setName(string memory _name) public {
-        name = _name;
+    function giveToDonatee(uint256 _amount) external payable {
+        require(_amount <= totalFunds ,"Pls Enter funds <= totalfunds");
+        _instance.receiveDonation(_amount);
+        totalFunds -= _amount;
     }
 
-    function setLocation(string memory _location) public {
-        location = _location;
+    function withdrawDonatee(uint256 _amount) public payable {
+        _instance.withdraw(_amount);
+    }
+    
+    function donateeShowBalance() public view returns (uint256) {
+        return _instance.showBalance();
     }
 
-    function getName() public view returns (string memory) {
-        return name;
+    function setDonorName(string memory _name) public {
+        donorName = _name;
     }
 
-    function getLocation() public view returns (string memory) {
-        return location;
+    function setDonorLocation(string memory _location) public {
+        donorLocation = _location;
     }
 
-    // thisfunc will call the parent class
-    function DONATE(uint _amount) public {
-        _instance.Donate(address(this), _amount);
+    function getDonorName() public view returns (string memory) {
+        return donorName;
     }
 
-    // u might think am duplicating this function, its yes and no
-    // encapsulating the data allowing the users to only view
-    function getNGOFunds() public view returns (uint){
-        return _instance.getNGOFunds();
+    function getDonorLocation() public view returns (string memory) {
+        return donorLocation;
     }
-
-    function getDonorList() public view returns (address[] memory, string memory) {
-        return (_instance.getDonors(), name);
-        // return name;
-    }
-
-    function getSuspectList() public view returns (address[] memory) {
-        return _instance.getLaundry();
-    } 
-}
-
-contract Donatee {
-
 }
