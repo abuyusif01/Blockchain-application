@@ -13,6 +13,7 @@ contract NGO {
 
     uint threshold = 10;
     uint totalFunds = 0;
+    uint susFunds = 0;
     uint maxValue = 50;
     Donatee private _instance; //instance of donatee obj
 
@@ -25,19 +26,15 @@ contract NGO {
 
         require(donoraddr != address(0x00) , "Pls enter your etherium addr");
         require(_amount >= 1, "Pls Enter an integer number");
+        require(totalFunds < maxValue, "\nEveryone will be alert in the Network\nThis place isn't laundry Pls!!!");
 
-        if(_amount > threshold ){
-            addDonors(donoraddr);
+        if(_amount > threshold  ){
            addSuspect(donoraddr);
-           totalFunds += _amount;
-           require(_amount <= threshold, "Your addr will be added to suspect");
+           susFunds += _amount;
         }
-        else if(_amount <= threshold ) {
+        if(_amount <= threshold) {
             addDonors(donoraddr);
-            totalFunds += _amount;
-        }
-        else if(totalFunds > maxValue) {
-            alertAll();
+            totalFunds += _amount;  
         }
     }
 
