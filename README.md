@@ -24,8 +24,7 @@ There're 2 file in /src
 ├── README.md
 ├── test
 │   └── NGOrganizationTest.js
-└── truffle-config.js
-```bash
+└── truffle-config.js```
 
 ## Pls read test/NGOrganizationTest.js for more details
 
