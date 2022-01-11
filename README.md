@@ -11,7 +11,7 @@ There're 2 file in /src
 
 
 # Part 2 phase
-`
+``
 ├── build
 │   └── contracts
 │       ├── Donatee.json
@@ -24,7 +24,8 @@ There're 2 file in /src
 ├── README.md
 ├── test
 │   └── NGOrganizationTest.js
-└── truffle-config.js`
+└── truffle-config.js
+``
 
 
 ### Pls read test/NGOrganizationTest.js for more details
