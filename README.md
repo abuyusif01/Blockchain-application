@@ -10,7 +10,7 @@ There're 2 file in /src
 - you just need to run NGOrganization.sol (no need Donatee.sol).
 
 
-# Part 2 phase
+# Part 2 phase directory structure
 ```
 ├── build
 │   └── contracts
