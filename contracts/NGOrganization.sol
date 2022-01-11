@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-import "Donatee.sol";
+import "./Donatee.sol";
 pragma solidity >=0.7.0 <0.9.0;
 
 contract NGOrganization{
@@ -8,16 +8,20 @@ contract NGOrganization{
     // all local variables 
     address[] private donors;
     address[] private donatees;
+    address private owner;
     address[] private suspectLaundry;
     string private donorName;
     string private donorLocation;
+    string private user;
     uint private threshold = 10;
     uint private totalFunds = 0;
     uint private susFunds = 0;
     uint private maxValue = 50;
     Donatee private _instance; //instance of donatee obj
 
-    constructor() {
+    constructor(string memory _user) {
+        owner = msg.sender;
+        user = _user;
         _instance = new Donatee();
         addDonatees(address(_instance)); // make ur life easy
     }
@@ -59,6 +63,16 @@ contract NGOrganization{
         donors.push(_donor);
     }
 
+    function getUser() public view returns (string memory) {
+        return user;
+    }
+
+    function setUser(string memory _user) public 
+    {
+        require(msg.sender == owner, "Not the owner");
+        user = _user;
+    }
+
     function addDonatees(address _donatee) private {
         donatees.push(_donatee);
     }
@@ -67,7 +81,7 @@ contract NGOrganization{
         suspectLaundry.push(_suspect);
     }
 
-    function alertAll() private returns (bool){
+    function alertAll() private view returns (bool){
         if (totalFunds < maxValue) {
             return true;
         }
@@ -108,3 +122,4 @@ contract NGOrganization{
         return donorLocation;
     }
 }
+
