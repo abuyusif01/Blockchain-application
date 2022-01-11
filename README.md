@@ -1,7 +1,10 @@
 # Blockchain-application
 
 There're 2 file in /src 
-- Donatee.sol has some basic on the donatees
-- NGO.sol has all the transaction functionalities
+- Donatee.sol has some basic information on the donatees
+- NGOrganization.sol has all the transaction functionalities
 
-if u wanna run this project in solidity, just copy past the files. (there're separate files, different contract)
+
+# How to run?
+- mirror /src to remix ide.
+- you just need to run NGOrganization.sol (no need Donatee.sol).
