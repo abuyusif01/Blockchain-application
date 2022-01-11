@@ -1,29 +1,16 @@
-# Part 2 phase directory structure
+# ngorganization
 
-```
-├── build
-│   └── contracts
-│       ├── Donatee.json
-│       └── NGOrganization.json
-├── contracts
-│   ├── Donatee.sol
-│   └── NGOrganization.sol
-├── migrations
-│   └── 2_migrate_NGOrganization.js
-├── README.md
-├── test
-│   └── NGOrganizationTest.js
-└── truffle-config.js
-```
+A new Flutter project.
 
-### Pls read test/NGOrganizationTest.js for more details
+## Getting Started
 
-# Dependencies
+This project is a starting point for a Flutter application.
 
-You must have nodejs and npm installed your system the follow the above
-instructions.
+A few resources to get you started if this is your first Flutter project:
 
-- `isLinux ? sudo npm install -g truffle : npm install -g truffle`
-- `npm install dotenv`
-- `npm install env`
-- Also get ganache from here[(https://trufflesuite.com/ganache/)]
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
