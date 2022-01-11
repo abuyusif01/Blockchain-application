@@ -11,6 +11,19 @@ There're 2 file in /src
 
 
 # Part 2 phase
+├── build
+│   └── contracts
+│       ├── Donatee.json
+│       └── NGOrganization.json
+├── contracts
+│   ├── Donatee.sol
+│   └── NGOrganization.sol
+├── migrations
+│   └── 2_migrate_NGOrganization.js
+├── README.md
+├── test
+│   └── NGOrganizationTest.js
+└── truffle-config.js
 
 
 ### Pls read test/NGOrganizationTest.js for more details
