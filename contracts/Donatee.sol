@@ -6,33 +6,48 @@ contract Donatee {
     string private name;
     string private location;
     uint256 private totalFunds = 0;
+    address private addr;
 
-    function receiveDonation(uint _amount) external payable{
+    function receiveDonation(uint256 _amount) external payable{
         totalFunds += _amount;
     }
 
-    function withdraw(uint _amount) external payable {
+    function withdraw(uint256 _amount) external payable {
         require(_amount <= totalFunds, "Must be <= TotalFunds");
         totalFunds -= _amount;
     }
 
-    function showBalance() public view returns (uint) {
+    function showBalance() public view returns (uint256) {
         return totalFunds;
     }
 
-    function setName(string memory _name) public {
+    function setDonateeName(string memory _name) public {
         name = _name;
     }
 
-    function setLocation(string memory _location) public {
+    function setDonateeLocation(string memory _location) public {
         location = _location;
     }
 
-    function getName() public view returns (string memory) {
+    function getDonateeName() public view returns (string memory) {
         return name;
     }
 
-    function getLocation() public view returns (string memory) {
+    function getDonateeLocation() public view returns (string memory) {
         return location;
     }
+
+    function setDonateeAddr(address _addr) public {
+        addr = _addr;
+    }
+
+    function getDonateeAddr() public view returns(address) {
+        return addr;
+    }
+
+    function getDonateeTotalFunds() public view returns(uint256 ) {
+        return totalFunds;
+    }
+
+    
 }

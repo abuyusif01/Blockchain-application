@@ -17,13 +17,16 @@ contract NGOrganization{
     uint private totalFunds = 0;
     uint private susFunds = 0;
     uint private maxValue = 50;
-    Donatee private _instance; //instance of donatee obj
+    Donatee public _instance; //instance of donatee obj
+    Donatee private _instance1; //instance of donatee obj1 for truffle testing
 
     constructor(string memory _user) {
         owner = msg.sender;
         user = _user;
         _instance = new Donatee();
+        // _instance1 = new Donatee();
         addDonatees(address(_instance)); // make ur life easy
+        // addDonatees(address(_instance1));
     }
     // Donate Function 
     function DONATE(address donoraddr, uint _amount) public payable {
@@ -46,6 +49,20 @@ contract NGOrganization{
     function getNGOFunds() public view returns (uint) { 
         return totalFunds;
     }
+
+
+    function getSusFunds() public view returns (uint) { 
+        return susFunds;
+    }
+
+    function getThreshold() public view returns (uint) { 
+        return threshold;
+    }
+
+    function getMaxValue() public view returns (uint) { 
+        return maxValue;
+    }
+
 
     function getDonors() public view returns (address[] memory){
         return donors;
@@ -121,5 +138,8 @@ contract NGOrganization{
     function getDonorLocation() public view returns (string memory) {
         return donorLocation;
     }
+    
+    function getDonateeInfo() public view returns (address, string memory, string memory, uint256 ) {
+        return (_instance.getDonateeAddr(), _instance.getDonateeName(), _instance.getDonateeLocation(), _instance.getDonateeTotalFunds());
+    }
 }
-
