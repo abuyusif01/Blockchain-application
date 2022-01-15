@@ -1,8 +1,4 @@
 const NGOrganization = artifacts.require("NGOrganization");
-require('dotenv').config()
-
-
-// NGO is the actual project file
 
 contract('NGOrganization', (accounts) => {
 
@@ -20,14 +16,41 @@ contract('NGOrganization', (accounts) => {
     donors = {
         "abu": "0x56a2777e796eF23399e9E1d791E1A0410a75E31b",
         "farhana": "0x9396B453Fad71816cA9f152Ae785276a1D578492",
+        "husna": "0xd9145CCE52D386f254917e481eB44e9943F39138"
     }
-    Array.prototype.equals = function(arr2) {
+    donatees = [
+        Abubakar = {
+            "addr": address["abu"],
+            "name": "Abubakar",
+            "location": "Nigeria"
+        },
+        Farhana = {
+            "addr": address["farhana"],
+            "name": "Farhana",
+            "location": "Malaysia"
+        },
+        Husna = {
+            "addr": address["husna"],
+            "name": "husna",
+            "location": "Singapore"
+        }
+    ]
+
+    Array.prototype.equals = function (arr2) {
         return (
-          this.length === arr2.length &&
-          this.every((value, index) => value === arr2[index])
+            this.length === arr2.length &&
+            this.every((value, index) => value === arr2[index])
         );
-      };
-      
+    };
+
+    function toArray(oldArray) { // js is weird
+        var newArray = [];
+        for (var i = 0; i < 3; i++) {
+            newArray[i] = oldArray[i];
+        }
+        return newArray;
+    }
+
     let Organization
     before(async () => {
         Organization = await NGOrganization.deployed();
@@ -45,10 +68,17 @@ contract('NGOrganization', (accounts) => {
         const receivedAdmin = await Organization.getUser()
         assert.equal(receivedAdmin, "Abu")
     })
-    // TODO
-    // Create_2_functions
-    // 1 - showDonorInfo() -> return all donor info, name, location, total transactions involement and so on
-    // 2 - showDonateeInfo() -> return donor name, location, and acc balance
+
+
+    it('Testing the setDonateeInfo and getDonateeInfo', async () => {
+        await Organization.setDonateeInfo(donatees[0].addr, donatees[0].name, donatees[0].location);
+        var local_donatee_info;
+        await Organization.getDonateeInfo.call().then(function (remote_donatee_info) {
+            local_donatee_info = toArray(remote_donatee_info);
+        });
+        // assert.equal(true, Object.values(await Organization.getLaundry()).equals(Object.values(suspectList)))
+        assert.equal(true, local_donatee_info.equals(Object.values(donatees[0])));
+    })
 
     it('Should return null because no donation where made', async () => {
         const donors = await Organization.getDonors();
@@ -69,35 +99,25 @@ contract('NGOrganization', (accounts) => {
     })
 
     it('Testing Suspect functionality', async () => {
-
-        // so in here abu donates 15, which is above the threshold, we're expecting his address to be in the suspect list
+        // so in here abu  and farhan donates 15, which is above the threshold,
+        // we're expecting their address to be in the suspect list
         await Organization.DONATE(address["abu"], 15)
         await Organization.DONATE(address["farhana"], 15)
-        assert.equal(true, Object.values(await Organization.getLaundry()).
-        equals(Object.values(suspectList)))
+        assert.equal(true, Object.values(await Organization.getLaundry()).equals(Object.values(suspectList)))
     })
 
-    it('Get the Donatees address', async () => {
-        
+    it('Should return Husna because she donated 5eth earlier', async () => {
+        const _donors = await Organization.getDonors();
+        assert.equal(_donors, donors["husna"]);
     })
 
-    it('Get the Donors address', async () => {
-        assert.equal(true, Object.values(await Organization.getLaundry()).
-        equals(Object.values(suspectList)))
+    it('Giving 3eth to Donatee', async () => {
+        await Organization.giveToDonatee(3);
+        assert.equal(3, await Organization.donateeShowBalance());
     })
 
-
-    // should return the array list of donatees atm {getDonatees()}
-
-    // should return the array list of suspect {getSuspect()}
-
-    // should return the array list of the donors{getDonors[]()}
-
-    // should return the information of a donor all of 'em.
-
-    // should return true {DONATE()}   NOTE: need to change the return type of DONATE function
-
-    // should return NGO funds == this.totalFunds NOTE: totalFunds must be change to public
-
-    // giveToDonatee() do the calculations and cross check to  make sure the transaction succeed, aka call donateShowBalance() to check the balance after transferring the money
+    it('Withdrawing 2eth from Donatee account', async () => {
+        await Organization.withdrawDonatee(2);
+        assert.equal(1, await Organization.donateeShowBalance());
+    })
 })

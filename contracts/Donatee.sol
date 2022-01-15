@@ -48,6 +48,4 @@ contract Donatee {
     function getDonateeTotalFunds() public view returns(uint256 ) {
         return totalFunds;
     }
-
-    
 }

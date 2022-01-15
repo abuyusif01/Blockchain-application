@@ -139,6 +139,12 @@ contract NGOrganization{
         return donorLocation;
     }
     
+    function setDonateeInfo(address _addr, string memory _name, string memory _location) public {    
+        _instance.setDonateeAddr(_addr);
+        _instance.setDonateeName(_name);
+        _instance.setDonateeLocation(_location);
+    }
+
     function getDonateeInfo() public view returns (address, string memory, string memory, uint256 ) {
         return (_instance.getDonateeAddr(), _instance.getDonateeName(), _instance.getDonateeLocation(), _instance.getDonateeTotalFunds());
     }
