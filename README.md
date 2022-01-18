@@ -22,7 +22,7 @@
 
 # Dependencies
 
-You must have nodejs and npm installed your system the follow the above
+You must have nodejs and npm installed your system then follow then below
 instructions.
 
 - `isLinux ? sudo npm install -g truffle : npm install -g truffle`
