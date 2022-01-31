@@ -2,6 +2,7 @@ const NGOrganization = artifacts.require("NGOrganization");
 
 contract('NGOrganization', (accounts) => {
 
+    let sub = 1000000000000000000;
     address = {
         "abu": "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
         "farhana": "0xC711F2474e84f765A5e2680f39ac1fCF8e73FC87",
@@ -86,38 +87,47 @@ contract('NGOrganization', (accounts) => {
     })
 
     it('Should return all initial values, threshold = 10, totalFunds = 0, susFunds = 0, maxValue = 50', async () => {
+        // var maxValue = sub * 50;
+        // var threshold = sub * 10;
         assert.equal(await Organization.getNGOFunds(), 0) //  current NGO funds we have
         assert.equal(await Organization.getSusFunds(), 0) // The suspect laundery 
         assert.equal(await Organization.getMaxValue(), 50) // the max threshold
-        assert.equal(await Organization.getThreshold(), 10) // max donation for one person
+        assert.equal(await Organization.getThreshold.call(), 10) // max donation for one person
     })
 
 
     it('Testing DONATE functionality', async () => {
-        await Organization.DONATE(address["husna"], 5)
-        assert.equal(await Organization.getNGOFunds(), 5)
+        // await Organization.DONATE(address["husna"])
+        // await Organization.DONATE(accounts[1]).send({ from: accounts[0], value: 10 })
+        
+        // await Organization.DONATE(accounts[1], {from: accounts[0], value: 1});                                                         
+        // assert.equal(await Organization.getNGOFunds(), 1)
+        // await contract.methods.DONATE("0x6514b160d63EF892E638fDfF67209f562a929aCe").send({ from: accounts[0], value: input })
+        await Organization.methods.DONATE(accounts[2]).send({ from: accounts[0], value: 10});
+        let x = await Organization.getNGOFunds();
+        console.log(x);
     })
 
-    it('Testing Suspect functionality', async () => {
-        // so in here abu  and farhan donates 15, which is above the threshold,
-        // we're expecting their address to be in the suspect list
-        await Organization.DONATE(address["abu"], 15)
-        await Organization.DONATE(address["farhana"], 15)
-        assert.equal(true, Object.values(await Organization.getLaundry()).equals(Object.values(suspectList)))
-    })
+    // it('Testing Suspect functionality', async () => {
+    //     // so in here abu  and farhan donates 15, which is above the threshold,
+    //     // we're expecting their address to be in the suspect list
+    //     await Organization.DONATE(address["abu"], 15)
+    //     await Organization.DONATE(address["farhana"], 15)
+    //     assert.equal(true, Object.values(await Organization.getLaundry()).equals(Object.values(suspectList)))
+    // })
 
-    it('Should return Husna because she donated 5eth earlier', async () => {
-        const _donors = await Organization.getDonors();
-        assert.equal(_donors, donors["husna"]);
-    })
+    // it('Should return Husna because she donated 5eth earlier', async () => {
+    //     const _donors = await Organization.getDonors();
+    //     assert.equal(_donors, donors["husna"]);
+    // })
 
-    it('Giving 3eth to Donatee', async () => {
-        await Organization.giveToDonatee(3);
-        assert.equal(3, await Organization.donateeShowBalance());
-    })
+    // it('Giving 3eth to Donatee', async () => {
+    //     await Organization.giveToDonatee(3);
+    //     assert.equal(3, await Organization.donateeShowBalance());
+    // })
 
-    it('Withdrawing 2eth from Donatee account', async () => {
-        await Organization.withdrawDonatee(2);
-        assert.equal(1, await Organization.donateeShowBalance());
-    })
+    // it('Withdrawing 2eth from Donatee account', async () => {
+    //     await Organization.withdrawDonatee(2);
+    //     assert.equal(1, await Organization.donateeShowBalance());
+    // })
 })

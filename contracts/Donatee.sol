@@ -8,6 +8,16 @@ contract Donatee {
     uint256 private totalFunds = 0;
     address private addr;
 
+    // Function to receive Ether. msg.data must be empty
+    receive() external payable {
+        totalFunds += msg.value;
+    }
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {
+        totalFunds += msg.value;
+    }
+
     function receiveDonation(uint256 _amount) external payable{
         totalFunds += _amount;
     }
@@ -15,10 +25,6 @@ contract Donatee {
     function withdraw(uint256 _amount) external payable {
         require(_amount <= totalFunds, "Must be <= TotalFunds");
         totalFunds -= _amount;
-    }
-
-    function showBalance() public view returns (uint256) {
-        return totalFunds;
     }
 
     function setDonateeName(string memory _name) public {

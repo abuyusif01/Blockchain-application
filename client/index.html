@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="css/index.css" />
+    <script
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+      type="text/javascript"
+    ></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing page</title>
+  </head>
+  <body>
+    <script>
+      $(document).ready(function () {
+        $("#user").click(function () {
+          $(".message").css("transform", "translateX(100%)");
+          if ($(".message").hasClass("admin")) {
+            $(".message").removeClass("admin");
+          }
+          $(".message").addClass("user");
+        });
+
+        $("#admin").click(function () {
+          $(".message").css("transform", "translateX(0)");
+          if ($(".message").hasClass("admin")) {
+            $(".message").removeClass("user");
+          }
+          $(".message").addClass("admin");
+        });
+      });
+      function adminAllow() {
+        username = document.getElementById("username").value;
+        pass = document.getElementById("pass").value;
+
+        if (username == "admin" && pass == "admin") {
+          window.location.href = "admin.html";
+        } else {
+          alert("Pls enter a valid Login Creds");
+        }
+      }
+
+      function onChoice() {
+        window.location.href = "donor_donatee.html";
+      }
+    </script>
+    <div class="container">
+      <div class="message user">
+        <div class="form--heading">Who are you?</div>
+        <div class="btn-wrapper">
+          <button class="button" id="user">User</button>
+          <button class="button" id="admin">Admin</button>
+        </div>
+      </div>
+      <div class="form form--signup">
+        <div class="form--heading">What You wanna be?</div>
+        <form autocomplete="off" action="javascript:;">
+          <button class="button" id="donatee" onclick="onChoice()">
+            Donatee
+          </button>
+          <button class="button" id="donor" onclick="onChoice()">Donor</button>
+        </form>
+      </div>
+      <div class="form form--login">
+        <div class="form--heading">Admin Login Portal</div>
+        <form action="javascript:adminAllow();" autocomplete="off">
+          <input
+            type="text"
+            placeholder="Name"
+            id="username"
+            name="usernamae"
+          />
+          <input type="password" placeholder="Password" id="pass" name="pass" />
+          <button class="button" type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,7 +1,5 @@
-// SPDX-License-Identifier: GPL-3.0
 
-import "./Donatee.sol";
-pragma solidity >=0.7.0 <0.9.0;
+import './Donatee.sol';
 
 contract NGOrganization{
 
@@ -13,12 +11,17 @@ contract NGOrganization{
     string private donorName;
     string private donorLocation;
     string private user;
-    uint private threshold = 10;
-    uint private totalFunds = 0;
-    uint private susFunds = 0;
-    uint private maxValue = 50;
-    Donatee public _instance; //instance of donatee obj
+    uint private threshold = 10 ;
+    uint private totalFunds = 0 ;
+    uint private susFunds = 0 ;
+    uint private maxValue = 50 ;
+    Donatee private _instance; //instance of donatee obj
     Donatee private _instance1; //instance of donatee obj1 for truffle testing
+
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
 
     constructor(string memory _user) {
         owner = msg.sender;
@@ -28,28 +31,31 @@ contract NGOrganization{
         addDonatees(address(_instance)); // make ur life easy
         // addDonatees(address(_instance1));
     }
+    // Fallback function is called when msg.data is not empty
+   
     // Donate Function 
-    function DONATE(address donoraddr, uint _amount) public payable {
+    function DONATE(address payable _to) public payable {
 
-        require(donoraddr != address(0x00) , "Pls enter your etherium addr");
-        require(_amount >= 1, "Pls Enter an integer number");
+        require(msg.sender != address(0x00) , "Pls enter your etherium addr");
+        require(msg.value >= 1, "Pls Enter an integer number");
         require(alertAll(), "\nEveryone will be alert in the Network\nThis place isn't laundry Pls!!!");
-
-        if(_amount > threshold  ){
-           addSuspect(donoraddr);
-           susFunds += _amount;
+        
+        if(msg.value > threshold  ){
+           addSuspect(msg.sender);
+           susFunds += msg.value;
         }
-        if(_amount <= threshold) {
-            addDonors(donoraddr);
-            totalFunds += _amount;  
+        if(msg.value <= threshold) {
+            addDonors(msg.sender);
+            totalFunds += msg.value;  
         }
+        (bool sent, bytes memory data) = _to.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
     }
-
+    
     // get all money in NGO
     function getNGOFunds() public view returns (uint) { 
         return totalFunds;
     }
-
 
     function getSusFunds() public view returns (uint) { 
         return susFunds;
@@ -105,14 +111,16 @@ contract NGOrganization{
         return false;
     }
 
-    function giveToDonatee(uint256 _amount) external payable {
-        require(_amount <= totalFunds ,"Pls Enter funds <= totalfunds");
-        _instance.receiveDonation(_amount);
+    function giveToDonatee(address payable _to) external payable {
+        require(msg.value <= totalFunds ,"Pls Enter funds <= totalfunds");
+        _instance.receiveDonation(msg.value);
 
         // uncomment this line if u're using metamask (injected Web3), 
         // because this will duduct the money from ur wallet
         // payable (msg.sender).transfer(_amount);
-        totalFunds -= _amount;
+        (bool sent, bytes memory data) = _to.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        totalFunds -= msg.value;
     }
 
     function withdrawDonatee(uint256 _amount) public payable {
@@ -120,7 +128,7 @@ contract NGOrganization{
     }
     
     function donateeShowBalance() public view returns (uint256) {
-        return _instance.showBalance();
+        return _instance.getDonateeTotalFunds();
     }
 
     function setDonorName(string memory _name) public {
@@ -143,6 +151,7 @@ contract NGOrganization{
         _instance.setDonateeAddr(_addr);
         _instance.setDonateeName(_name);
         _instance.setDonateeLocation(_location);
+        addDonatees(_addr);
     }
 
     function getDonateeInfo() public view returns (address, string memory, string memory, uint256 ) {
