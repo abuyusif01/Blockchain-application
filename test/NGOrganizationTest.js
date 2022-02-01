@@ -1,4 +1,5 @@
 const NGOrganization = artifacts.require("NGOrganization");
+const Web3 = require("web3");
 
 contract('NGOrganization', (accounts) => {
 
@@ -6,7 +7,6 @@ contract('NGOrganization', (accounts) => {
     before(async () => {
         Organization = await NGOrganization.deployed();
     })
-
 
     address = {
         "abu": accounts[0],
@@ -24,17 +24,20 @@ contract('NGOrganization', (accounts) => {
         "farhana": accounts[6],
         "husna": accounts[7]
     }
+
     donatees = [
         Abubakar = {
             "addr": address["abu"],
             "name": "Abubakar",
             "location": "Nigeria"
         },
+
         Farhana = {
             "addr": address["farhana"],
             "name": "Farhana",
             "location": "Malaysia"
         },
+
         Husna = {
             "addr": address["husna"],
             "name": "husna",
@@ -88,19 +91,19 @@ contract('NGOrganization', (accounts) => {
     it('Should return all initial values, threshold = 10, totalFunds = 0, susFunds = 0, maxValue = 50', async () => {
         assert.equal(await Organization.getNGOFunds(), 0) //  current NGO funds we have
         assert.equal(await Organization.getSusFunds(), 0) // The suspect laundery 
-        assert.equal(await Organization.getMaxValue(), 50) // the max threshold
-        assert.equal(await Organization.getThreshold.call(), 10) // max donation for one person
+        assert.equal(await Organization.getMaxValue(), Web3.utils.toWei('50', 'ether')) // the max threshold
+        assert.equal(await Organization.getThreshold.call(), Web3.utils.toWei('10', 'ether')) // max donation for one person
     })
 
 
     it('Testing DONATE functionality', async () => {
-        await Organization.DONATE(Organization.address, ({ from: donors["abu"], value: 10 }))
-        assert.equal(await Organization.getNGOFunds(), 10)
+        await Organization.DONATE(Organization.address, ({ from: donors["abu"], value: Web3.utils.toWei('10', 'ether') }))
+        assert.equal(await Organization.getNGOFunds(), Web3.utils.toWei('10', 'ether'))
     })
 
     it('Testing Suspect functionality', async () => {
-        await Organization.DONATE(Organization.address, ({ from: suspectList["abu"], value: 15 }))
-        await Organization.DONATE(Organization.address, ({ from: suspectList["farhana"], value: 15 }))
+        await Organization.DONATE(Organization.address, ({ from: suspectList["abu"], value: Web3.utils.toWei('15', 'ether') }))
+        await Organization.DONATE(Organization.address, ({ from: suspectList["farhana"], value: Web3.utils.toWei('15', 'ether') }))
         assert.equal(true, Object.values(await Organization.getLaundry()).equals(Object.values(suspectList)))
     })
 
@@ -110,12 +113,12 @@ contract('NGOrganization', (accounts) => {
     })
 
     it('Giving 3eth to Donatee', async () => {
-        await Organization.giveToDonatee(donatees[0].addr, ({ from: accounts[0], value: 3 }))
-        assert.equal(3, await Organization.donateeShowBalance());
+        await Organization.giveToDonatee(donatees[0].addr, ({ from: accounts[0], value: Web3.utils.toWei('3', 'ether') }))
+        assert.equal( Web3.utils.toWei('3', 'ether'), await Organization.donateeShowBalance());
     })
 
     it('Withdrawing 2eth from Donatee account', async () => {
-        await Organization.withdrawDonatee(2);
-        assert.equal(1, await Organization.donateeShowBalance());
+        await Organization.withdrawDonatee(Web3.utils.toWei('2', 'ether'));
+        assert.equal( Web3.utils.toWei('1', 'ether'), await Organization.donateeShowBalance());
     })
 })

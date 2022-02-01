@@ -11,33 +11,29 @@ contract NGOrganization{
     string private donorName;
     string private donorLocation;
     string private user;
-    uint private threshold = 10 ;
-    uint private totalFunds = 0 ;
-    uint private susFunds = 0 ;
-    uint private maxValue = 50 ;
+    uint private threshold = 10 ether;
+    uint private totalFunds = 0 ether;
+    uint private susFunds = 0 ether;
+    uint private maxValue = 50 ether;
     Donatee private _instance; //instance of donatee obj
-    Donatee private _instance1; //instance of donatee obj1 for truffle testing
 
     receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
     fallback() external payable {}
 
     constructor(string memory _user) {
         owner = msg.sender;
         user = _user;
         _instance = new Donatee();
-        // _instance1 = new Donatee();
         addDonatees(address(_instance)); // make ur life easy
         // addDonatees(address(_instance1));
     }
     // Fallback function is called when msg.data is not empty
    
     // Donate Function 
-    function DONATE(address payable _to) public payable {
+    function DONATE(address payable _to, string memory _name, string memory _location) public payable {
 
         require(msg.sender != address(0x00) , "Pls enter your etherium addr");
-        require(msg.value >= 1, "Pls Enter an integer number");
+        require(msg.value >= 1 ether, "Pls Enter an integer number");
         require(alertAll(), "\nEveryone will be alert in the Network\nThis place isn't laundry Pls!!!");
         
         if(msg.value > threshold  ){
@@ -46,7 +42,9 @@ contract NGOrganization{
         }
         if(msg.value <= threshold) {
             addDonors(msg.sender);
-            totalFunds += msg.value;  
+            totalFunds += msg.value;
+            setDonorName(_name);
+            setDonorLocation(_location);
         }
         (bool sent, bytes memory data) = _to.call{value: msg.value}("");
         require(sent, "Failed to send Ether");

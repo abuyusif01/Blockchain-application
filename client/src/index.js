@@ -1,11 +1,11 @@
-const displayNGOtotalFunds = async (contract) => {
+const displayNGOtotalFunds = async (contract, web3) => {
     let funds = await contract.methods.getNGOFunds().call();
-    let susfunds = await contract.methods.getSusFunds().call();
-    $('#totalFunds').html(`Total Funds: <b style="font-size: 30px;">${funds}</b>eth`);
-    $('#totalsusFunds').html(`Total SusFunds: <b style="font-size: 30px;">${susfunds}</b>eth`);
+    let susFunds = await contract.methods.getSusFunds().call();
+    $('#totalFunds').html(`Total Funds: <b style="font-size: 30px;">${web3.utils.fromWei(funds, 'ether')}</b>eth`);
+    $('#totalsusFunds').html(`Total SusFunds: <b style="font-size: 30px;">${web3.utils.fromWei(susFunds, 'ether')}</b>eth`);
 }
 
-const giveToDonatee = async (contract, accounts) => {
+const giveToDonatee = async (contract, accounts, web3) => {
     let amount;
     let donatee_addr;
     $('#amount').on('change', (e) => {
@@ -16,13 +16,12 @@ const giveToDonatee = async (contract, accounts) => {
     });
     $("#givetodonateeform").on("submit", async (e) => {
         e.preventDefault();
-        amount = parseInt(amount);
-        await contract.methods.giveToDonatee(donatee_addr).send({ from: accounts[0], value: amount })
-        displayNGOtotalFunds(contract);
+        await contract.methods.giveToDonatee(donatee_addr).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') })
+        displayNGOtotalFunds(contract, web3);
     });
 }
 
-const setDonorInfo = async (contract, accounts) => {
+const setDonorInfo = async (contract, accounts, web3) => {
 
     let name;
     let location;
@@ -42,10 +41,7 @@ const setDonorInfo = async (contract, accounts) => {
 
     $("#donatenowform").on("submit", async (e) => {
         e.preventDefault();
-        amount = parseInt(amount);
-        await contract.methods.setDonorName(name).send({ from: accounts[0] });
-        await contract.methods.setDonorLocation(location).send({ from: accounts[0] })
-        await contract.methods.DONATE(contract._address).send({ from: accounts[0], value: amount })
+        await contract.methods.DONATE(contract._address, name, location).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') })
         alert("Thanks for ur donation :)");
     });
 }
@@ -69,7 +65,6 @@ const setDonateeInfo = async (contract, accounts) => {
 
     $("#setdonateeinfoform").on("submit", async (e) => {
         e.preventDefault();
-        await contract.methods.addDonatees(donateeWalletAddr).send({ from: accounts[0] });
         await contract.methods.setDonateeInfo(donateeWalletAddr, name, location).send({ from: accounts[0] });
         alert("thanks for registering. You will recieve a donation when its available");
     })
@@ -124,19 +119,19 @@ const getDonatees = async (contract) => {
     $('#donateeaddr').html(out);
 }
 
-
 async function Organization() {
+
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
     const contract = await getContract(web3);
-
-    displayNGOtotalFunds(contract);
-    giveToDonatee(contract, accounts);
-    setDonorInfo(contract, accounts);
+    
     setDonateeInfo(contract, accounts);
+    giveToDonatee(contract, accounts, web3);
+    displayNGOtotalFunds(contract, web3);
+    setDonorInfo(contract, accounts, web3);
+    getDonatees(contract);
     getLaundry(contract);
     getDonors(contract);
-    getDonatees(contract);
 }
 
 Organization();
