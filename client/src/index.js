@@ -1,7 +1,6 @@
 const displayNGOtotalFunds = async (contract) => {
     let funds = await contract.methods.getNGOFunds().call();
     let susfunds = await contract.methods.getSusFunds().call();
-    susfunds = parseInt(susfunds / 100000000000000000); //some hardcoded values
     $('#totalFunds').html(`Total Funds: <b style="font-size: 30px;">${funds}</b>eth`);
     $('#totalsusFunds').html(`Total SusFunds: <b style="font-size: 30px;">${susfunds}</b>eth`);
 }

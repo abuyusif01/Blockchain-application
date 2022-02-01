@@ -1,6 +1,6 @@
 const getWeb3 = () => {
   return new Promise((resolve, reject) => {
-
+    
     window.addEventListener("load", async () => {
       if (window.ethereum) {
         const web3 = new Web3(window.ethereum);
@@ -23,12 +23,9 @@ const getContract = async (web3) => {
 
   const netId = await web3.eth.net.getId();
   const deployedNetwork = data.networks[netId];
-
- 
   const Organization = new web3.eth.Contract(
     data.abi,
     deployedNetwork && deployedNetwork.address
-
   );
   return Organization;
 };
