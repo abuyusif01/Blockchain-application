@@ -1,6 +1,5 @@
 
 import './Donatee.sol';
-
 contract NGOrganization{
 
     // all local variables 
